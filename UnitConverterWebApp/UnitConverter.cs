@@ -1,80 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace UnitConverterWebApp
 {
     public class UnitConverter
     {
-		public string[] YardsToMeters(string yards)
-		{
-			if (!yards.Contains('\n'))
-			{
-				double d = double.Parse(yards, CultureInfo.InvariantCulture) * 0.9144;
+        public string[] YardsToMeters(string yards)
+        {
+            return ConvertStringsByRatio(yards, 0.9144);
+        }
 
-				string[] array = new string[1];
-				array[0] = d.ToString();
+        public string[] InchesToCentimeters(string yards)
+        {
+            return ConvertStringsByRatio(yards, 2.54);
+        }
 
-				return array;
-			}
-			else
-			{
-				double[] doubles = new double[yards.Split('\n').Count()];
+        public string[] MilesToKilometers(string miles)
+        {
+            return ConvertStringsByRatio(miles, 1.609344);
+        }
 
-				for (int i = 0; i < yards.Split('\n').Count(); i++)
-				{
-					double value = double.Parse(yards.Split('\n')[i]);
-					doubles[i] = value;
+        private string[] ConvertStringsByRatio(string units, double ratio)
+        {
+            if (string.IsNullOrWhiteSpace(units))
+            {
+                return new string[] { "" };
+            }
 
-					string.Format("{0}", value * 0.9144);
-				}
+            if (!units.Contains('\n'))
+            {
+                double d = double.Parse(units, CultureInfo.InvariantCulture) * ratio;
 
-				string[] strings = new string[doubles.Length];
+                string[] array = new string[1];
+                array[0] = d.ToString();
 
-				for (int i = 0; i < yards.Split('\n').Length; i++)
-				{
-					strings[i] = string.Format("{0}", doubles[i] * 0.9144);
-				}
+                return array;
+            }
+            else
+            {
+                double[] doubles = new double[units.Split('\n').Count()];
 
-				return strings;
-			}
-		}
+                for (int i = 0; i < units.Split('\n').Count(); i++)
+                {
+                    double value = double.Parse(units.Split('\n')[i]);
+                    doubles[i] = value;
 
-		public string[] InchesToCentimeters(string yards)
-		{
-			if (!yards.Contains('\n'))
-			{
-				double numbers = double.Parse(yards, CultureInfo.InvariantCulture) * 2.54;
+                    string.Format("{0}", value * ratio);
+                }
 
-				string[] array = new string[1];
-				array[0] = numbers.ToString();
+                string[] strings = new string[doubles.Length];
 
-				return array;
-			}
-			else
-			{
-				double[] doubles = new double[yards.Split('\n').Count()];
+                for (int i = 0; i < units.Split('\n').Length; i++)
+                {
+                    strings[i] = string.Format("{0}", doubles[i] * ratio);
+                }
 
-				for (int i = 0; i < yards.Split('\n').Count(); i++)
-				{
-					double value = double.Parse(yards.Split('\n')[i]);
-					doubles[i] = value;
-
-					string.Format("{0}", value * 0.9144);
-				}
-
-				string[] strings = new string[doubles.Length];
-
-				for (int i = 0; i < yards.Split('\n').Length; i++)
-				{
-					strings[i] = string.Format("{0}", doubles[i] * 2.54);
-				}
-
-				return strings;
-			}
-		}
-	}
+                return strings;
+            }
+        }
+    }
 
 }

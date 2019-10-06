@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 
 namespace UnitConverterWebApp.Controllers
@@ -13,43 +12,34 @@ namespace UnitConverterWebApp.Controllers
             return View();
         }
 
-		public IActionResult Convert(string text, string action)
+        public IActionResult Convert(string text, string action)
         {
-			if (action == "Yards to meters")
-			{
-				return YardsToMeters(text);
-			}
+            switch (action)
+            {
+                case "Yards to meters":
+                    return InvokeConversionMethod("YardsToMeters", text);
+                case "Miles to kilometers":
+                    return InvokeConversionMethod("MilesToKilometers", text);
+                default:
+                    return InvokeConversionMethod("InchesToCentimeters", text);
+            }
+        }
 
-			return InchesToCentimeters(text);
-		}
 
-
-		public IActionResult YardsToMeters(string input)
+        public IActionResult InvokeConversionMethod(string action, string input)
         {
-			var converter = new UnitConverter();
+            var converter = new UnitConverter();
 
-			var result = "";
+            var result = "";
+            MethodInfo method = converter.GetType().GetMethod(action);
+            method.Invoke(converter, new object[] { input });
 
-			for (int i = 0; i < converter.YardsToMeters(input).Count(); i++)
-			{
-				result += converter.YardsToMeters(input)[i] + Environment.NewLine;
-			}
+            for (int i = 0; i < (method.Invoke(converter, new object[] { input }) as string[]).Count(); i++)
+            {
+                result += (method.Invoke(converter, new object[] { input }) as string[])[i] + Environment.NewLine;
+            }
 
-			return Content(result);
-		}
-
-		public IActionResult InchesToCentimeters(string input)
-        {
-			var converter = new UnitConverter();
-
-			var result = "";
-
-			for (int i = 0; i < converter.YardsToMeters(input).Count(); i++)
-			{
-				result += converter.InchesToCentimeters(input)[i] + Environment.NewLine;
-			}
-
-			return Content(result);
-		}
+            return Content(result);
+        }
     }
 }
