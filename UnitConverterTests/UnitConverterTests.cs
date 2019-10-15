@@ -12,6 +12,9 @@ namespace UnitConverterTests
 		[InlineData("100", "91.44")]
 		[InlineData("5", "4.572")]
 		[InlineData("17.96", "16.422624")]
+		[InlineData("", "")]
+		[InlineData("/n", "Not A Number")]
+		[InlineData("A", "Not A Number")]
 		public void YardsToMeters_GivenSingleValue_ReturnsCorrectString(string input, string expected)
 		{
 			var converter = new UnitConverter();
